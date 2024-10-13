@@ -42,6 +42,7 @@ impl Proxy {
 
         let mut openai_to_client = tokio::spawn(async move {
             while let Some(Ok(msg)) = openai_receiver.next().await {
+                println!("Received from OpenAI: {:?}", msg); //debug
                 let Some(msg) = msg.into_axum() else {
                     continue;
                 };
