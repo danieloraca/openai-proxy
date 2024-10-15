@@ -11,5 +11,28 @@
         <button id="stop-btn">Stop Recording</button>
         <pre id="response-text"></pre>
         <script src="client.js"></script>
+
+        <script>
+            const socketa = new WebSocket("ws://localhost:8000/ws");
+            console.log("Attempting Connection...");
+            socketa.onopen = function () {
+                console.log("Connected to WebSocket Proxy");
+                socketa.send(
+                    '{"type": "response.create","response": {"modalities": ["text"],"instructions": "what is 3+3+3?"}}',
+                );
+            };
+
+            socketa.onmessage = function (event) {
+                console.log("Received from Proxy:", event.data);
+            };
+
+            socketa.onclose = function (event) {
+                console.log("WebSocket closed:", event);
+            };
+
+            socketa.onerror = function (error) {
+                console.log("WebSocket error:", error);
+            };
+        </script>
     </body>
 </html>
