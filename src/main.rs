@@ -1,12 +1,21 @@
 use std::{env, net::SocketAddr};
 
 use axum::{extract::WebSocketUpgrade, response::IntoResponse, routing::get, Router};
+use http::Method;
 use openai_proxy::Proxy;
 use tokio::net::TcpListener;
+use tower_http::cors::{Any, CorsLayer};
 
 #[tokio::main]
 async fn main() {
-    let app = Router::new().route("/ws", get(ws_handler));
+    let cors_layer = CorsLayer::new()
+        .allow_origin(Any)
+        .allow_methods([Method::GET, Method::POST])
+        .allow_headers(Any);
+
+    let app = Router::new()
+        .route("/ws", get(ws_handler))
+        .layer(cors_layer);
 
     let addr = SocketAddr::from((
         [0, 0, 0, 0],
